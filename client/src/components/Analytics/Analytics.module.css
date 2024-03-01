@@ -1,0 +1,52 @@
+.analyticsScreen {
+    display: flex;
+    height: 100vh;
+    width: 80vw;
+    flex-direction: column;
+}
+
+.analyticsContent {
+    display: flex;
+}
+
+.analyticsData {
+    display: flex;
+    flex-direction: column;
+    width: 30vw;
+    height: 40vh;
+    background: #f0f7fd;
+    margin: 20px 0 0 20px;
+    border-radius: 15px;
+}
+
+.analyticsTitle{
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.analyticsRow{
+    width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.dataName{
+    display: flex;
+}
+
+.analyticsNumbers{
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.bullet{
+    width: 12px;
+    height: 12px;
+    background: #90C4CC;
+    margin-top: 22px;
+    margin-right: 10px;
+    border-radius: 50%;
+}

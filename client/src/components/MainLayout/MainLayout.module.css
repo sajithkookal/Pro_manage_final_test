@@ -1,0 +1,5 @@
+.dashboardSection {
+    background: #ededed;
+    display: flex;
+    align-items: flex-start; /* Align items to the top */
+  }

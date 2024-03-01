@@ -1,0 +1,73 @@
+.settingScreen {
+    display: flex;
+    height: 100vh;
+    width: 80vw;
+    flex-direction: column;
+}
+
+
+.settingTitle {
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.formInput {
+    padding-left: 10px;
+    width: 70%;
+    height: 2.5rem;
+    border-radius: 10px;
+    border: 1px solid rgb(132, 132, 132);
+    padding-left: 50px;
+}
+
+.logo {
+    position: relative;
+    left: 40px;
+    top: 8px;
+}
+
+.Icon {
+    width: 28px;
+}
+
+.formContainer{
+    width: 30vw;
+}
+
+.formAttribute{
+    display: flex;
+    margin: auto;
+    margin-top: 2rem;
+}
+
+.updateBtn{
+    width: 80%;
+    height: 2.5rem;
+    margin: 1.5rem 0;
+    border-radius: 55px;
+    border: none;
+    background: #17A2B8;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s ease-in;
+    box-shadow: 1px 1px 2px 1px #b3b3b3;
+}
+
+
+.updateBtn:hover {
+    background: #1bc5df;
+}
+
+.passwordToggle, .newPasswordToggle{
+    position: relative;
+    height: 25px;
+    right: 30px;
+    top: 10px;
+}
+
+.btnDiv{
+    display: flex;
+    justify-content: center;
+}

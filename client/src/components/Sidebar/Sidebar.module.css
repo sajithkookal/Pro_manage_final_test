@@ -1,0 +1,38 @@
+.sideBar{
+    height: 100vh;
+    width: 15vw;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.titlelogo{
+    margin-right: 10px;
+}
+
+.dashboardTitle{
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.modesContainer{
+    display: flex;
+    height: 85%;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.mode{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-left: 30px;
+}
+
+/* .activeMode{
+    background-color: yellow;
+} */
