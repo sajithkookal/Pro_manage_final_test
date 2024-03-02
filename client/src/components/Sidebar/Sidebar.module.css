@@ -1,6 +1,9 @@
 .sideBar{
     height: 100vh;
     width: 15vw;
+    background-color: #FFFFFF;
+    border-right: 2px solid #4391ED1A;
+
 }
 
 .logo{
@@ -8,15 +11,20 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
 .titlelogo{
     margin-right: 10px;
 }
-
-.dashboardTitle{
+.dashboardTitleM{
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+}
+.dashboardTitle{
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: rgb(184, 61, 61);
 }
 
 .modesContainer{
@@ -30,9 +38,5 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    margin-left: 30px;
+    padding-left: 30px;
 }
-
-/* .activeMode{
-    background-color: yellow;
-} */

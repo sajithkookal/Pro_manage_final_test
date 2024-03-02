@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import { Route, Routes, Navigate, useNavigate, BrowserRouter as Router, BrowserRouter } from "react-router-dom";
 import LoginSignup from './pages/LoginSignup/LoginSignUp';
+import TaskSharePage from './pages/TaskSharePage/TaskSharePage';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Setting from './pages/Setting';
@@ -24,6 +25,7 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<LoginSignup />} />
+          <Route path="/taskShared/:taskId" element={<TaskSharePage/>}/>
           <Route path="/dashboard" element={
             <PrivateRoute element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />} />
           } />

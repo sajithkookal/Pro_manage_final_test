@@ -4,7 +4,9 @@ import dotLogo from "../../assets/images/dots.svg"
 import collapseDownIcon from "../../assets/images/collapsedown.svg"
 import collapseUpIcon from "../../assets/images/collapseup.svg"
 import ToDoEditModal from '../ToDoEditModal/ToDoEditModal';
-import { BACKEND_URL } from '../../config/baseurl';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { backendBaseUrl, frontEndBaseUrl } from '../../config/baseurl';
 import axios from 'axios';
 
 const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdded }) => {
@@ -14,23 +16,23 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
     const [showChecklist, setShowChecklist] = useState(false);
     const [collapseIcon, setCollapseIcon] = useState(collapseDownIcon);
     const [editModalOpen, setEditModalOpen] = useState(false);
-    const [editedTask, setEditedTask] = useState(null);
+    const [editedTask, setEditedTask] = useState(task);
 
     const checkedTasks = taskChecklist.filter(task => task.isChecked).length; // Updated to use taskChecklist
     const totalTasks = taskChecklist.length; // Updated to use taskChecklist
 
+    // Function to truncate the title if it exceeds 10 characters
+    const truncatedTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
+
     useEffect(() => {
-        setShowChecklist(!collapseAll);
+        setShowChecklist(false);
+        setCollapseIcon(collapseDownIcon);
     }, [collapseAll]);
 
     const toggleOptions = () => {
         setShowOptions(!showOptions);
     };
 
-    // const toggleEditModal = () => {
-    //     setIsEditModalOpen(!isEditModalOpen);
-    //     setTaskIdToEdit(taskId); // Set the task ID to edit
-    // };
 
     const toggleChecklist = () => {
         setShowChecklist(!showChecklist); // Toggle checklist visibility
@@ -58,7 +60,7 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
         try {
             const token = localStorage.getItem('userToken');
             const taskId = updatedChecklist[index]._id;
-            const response = await axios.put(`${BACKEND_URL}/tasks/${taskId}`, {
+            const response = await axios.put(`${backendBaseUrl}/tasks/${task._id}/${taskId}`, {
                 isChecked: updatedChecklist[index].isChecked,
             }, {
                 headers: {
@@ -68,6 +70,7 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
             setChecklist(updatedChecklist);
             console.log(response.data); // Log the response from the backend
         } catch (error) {
+            alert(error.response.data.error);
             console.error('Error updating task:', error);
         }
     };
@@ -76,16 +79,17 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
         try {
             const token = localStorage.getItem('userToken');
             const taskId = task._id;
-            const response = await axios.put(`${BACKEND_URL}/tasks/${taskId}/status`, {
+            console.log(taskId+" newStatusn  "+newStatus);
+            const response = await axios.put(`${backendBaseUrl}/taskStatusUpdate/${taskId}`, {
                 status: newStatus,
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log(response.data);
             updateTaskStatus(taskId, newStatus);
         } catch (error) {
+            alert(error.response.data.error);
             console.error('Error updating task status:', error);
         }
     };
@@ -94,6 +98,18 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
         toggleOptions(); // Close options menu
         toggleCloseModal(taskId); // Open delete modal with taskId
     };
+    const handleShareClick = () => {
+        toggleOptions();
+        let taskLink = `${frontEndBaseUrl}/taskShared/${editedTask._id}`
+        navigator.clipboard.writeText(taskLink);
+        toast.success("Link Copied to Clipboard", {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            draggable: true,
+        });
+    }
 
     const handleEditClick = () => {
         setEditedTask(task); // Set the task data to be edited
@@ -103,7 +119,8 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
 
     // Function to render the mode buttons based on the current status
     const renderModeButtons = () => {
-        switch (status) {
+     console.log(" newStatusn22  "+editedTask.status);
+        switch (editedTask.status) {
             case 'todo':
                 return (
                     <>
@@ -140,6 +157,44 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
                 return null;
         }
     };
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to zero for accurate date comparison
+  
+    const isDueDatePassed = new Date(task.dueDate) < currentDate;
+    const isTaskCompleted = task.status === "done";
+
+    const getDateButtonStyle = () => {
+        if (isTaskCompleted) {
+          return { backgroundColor: "#63C05B", color: "#fff" }; // Completed tasks have this style
+        } else if (isDueDatePassed) {
+          return { backgroundColor: "#CF3636", color: "#fff" }; // Overdue tasks have this style
+        } else {
+          return {backgroundColor: "#a4a0a0", color: "#fff" }; // Default style for other cases
+        }
+      };
+    const getDaySuffix = (day) => {
+        if (day >= 11 && day <= 13) {
+          return 'th';
+        }
+        switch (day % 10) {
+          case 1:
+            return 'st';
+          case 2:
+            return 'nd';
+          case 3:
+            return 'rd';
+          default:
+            return 'th';
+        }
+      };
+       const formatDate = (dueDate) => {
+        const date = new Date(dueDate);
+        const month = date.toLocaleString('en-us', { month: 'short' });
+        const day = date.getDate();
+        const suffix = getDaySuffix(day);
+        return `${month} ${day}${suffix}`;
+      };
+    const formattedDate = formatDate(task.dueDate);
 
     return (
         <>
@@ -159,12 +214,12 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
                     {showOptions && (
                         <div className={styles.options}>
                             <div className={styles.optionBtn} onClick={handleEditClick}>Edit</div>
-                            <div className={styles.optionBtn}>Share</div>
+                            <div className={styles.optionBtn} onClick={handleShareClick}>Share</div>
                             <div className={styles.optionBtnDelete} onClick={handleDeleteClick}>Delete</div>
                         </div>
                     )}
                 </div>
-                <div className={styles.title}>{title}</div>
+                <div className={styles.title}>{truncatedTitle}</div>
                 <div className={styles.checklist}>
                     <div className={styles.checklistData}>
                         Checklist ({checkedTasks}/{totalTasks})
@@ -189,6 +244,9 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
                     </div>
                 )}
                 <div className={styles.modesBtn}>
+                    {task.dueDate && (
+                        <button className={styles.modeBtn}  style={getDateButtonStyle()}>{formattedDate}</button>
+                    )}
                     {renderModeButtons()}
                 </div>
             </div>

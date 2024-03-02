@@ -1,35 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ToDoEditModal.module.css';
 import axios from 'axios';
-import { BACKEND_URL } from "../../config/baseurl"
+import { backendBaseUrl } from "../../config/baseurl"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import deleteIcon from "../../assets/images/delete.svg"
 import addLogo from "../../assets/images/add.svg"
 import DatePicker from 'react-datepicker';
+import { format } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
     const [title, setTitle] = useState('');
     const [priority, setPriority] = useState('');
+    const [dateShowInButton, setDateShowInButton] = useState('Select Due Date');
     const [checklist, setChecklist] = useState([]);
-    const [dueDate, setDueDate] = useState(new Date());
+    const [dueDate, setDueDate] = useState(null);
+    const [calenderDate, setCalenderDate] = useState(new Date());
     const [selectedChecklist, setSelectedChecklist] = useState(0);
     const [showCalendar, setShowCalendar] = useState(false);
 
+
+    
+    const fetchTaskData = async () => {
+        try {
+            console.log("taskEditData");
+            console.log(task);
+        
+            const response = await axios.get(`${backendBaseUrl}/taskEditData/${task._id}`);
+            console.log(response.data);
+            console.log("response.data");
+
+            setTitle(response.data.task.title || '');
+            setPriority(response.data.task.priority || '');
+            setChecklist(response.data.task.checklist || []);
+            setDueDate(response.data.task.dueDate ? new Date(response.data.task.dueDate) : null);
+            setCalenderDate(response.data.task.dueDate ? new Date(response.data.task.dueDate) : new Date)
+            const selected = (response.data.task.checklist || []).filter((item) => item.isChecked).length;
+            setSelectedChecklist(selected);
+
+        } catch (error) {
+             alert(error.response.data.error);
+            console.error('Error fetching task:', error);
+        }
+    };
     useEffect(() => {
         if (task) {
-            setTitle(task.title || '');
-            setPriority(task.priority || '');
-            setChecklist(task.checklist || []);
-            setDueDate(task.dueDate ? new Date(task.dueDate) : new Date());
-            const selected = (task.checklist || []).filter((item) => item.isChecked).length;
-            setSelectedChecklist(selected);
+            fetchTaskData();
         }
-    }, [task]);
-
+    }, []);
     const handleDateChange = (date) => {
+        setShowCalendar(!showCalendar);
         setDueDate(date);
+        setCalenderDate(date);
+        setDateShowInButton(format(calenderDate, 'dd/MM/yyyy'));
     };
 
     const toggleCalendar = () => {
@@ -67,9 +91,20 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
 
     const handleEdit = async () => {
         try {
+            if(!title|| !priority || !checklist){
+                toast.error("Please fill mandatory fields", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    draggable: true,
+                });
+                return;
+            }
+           
             const token = localStorage.getItem('userToken');
             const response = await axios.put(
-                `${BACKEND_URL}/tasks/${task._id}`,
+                `${backendBaseUrl}/updateTasks/${task._id}`,
                 {
                     title,
                     priority,
@@ -80,25 +115,27 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            console.log("Respooncseeeeeeee",response.data);
+            console.log("Respooncseeeeeeee", response.data);
             onTaskAdded();
             closeModal();
+
             toast.success("Task edited successfully", {
                 position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
+                autoClose: 1000,
+                hideProgressBar: true,
                 closeOnClick: true,
                 draggable: true,
             });
         } catch (error) {
             console.error('Error editing task:', error);
-            toast.error("Failed to edit task. Please try again.", {
+            toast.error("Failed to edit task. Make sure check list name added.", {
                 position: "top-center",
                 autoClose: 2000,
-                hideProgressBar: false,
+                hideProgressBar: true,
                 closeOnClick: true,
                 draggable: true,
             });
+        
         }
     };
 
@@ -145,7 +182,7 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
                     <span className={styles.modalChecklist}>Checklist ({selectedChecklist}/{checklist.length})*</span>
                     <div className={styles.checklistInput}>
                         {checklist.map((item, index) => (
-                            <div key={index} className={styles.inputDiv}>
+                            <div key={index}>
                                 <input
                                     type="checkbox"
                                     checked={item.isChecked}
@@ -167,22 +204,25 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
                     </div>
                 </div>
                 <div className={styles.buttonDiv}>
-                    {showCalendar && (
-                        <DatePicker
-                            showIcon
-                            selected={dueDate}
-                            onChange={handleDateChange}
-                            icon="fa fa-calender"
-                        />
-                    )}
-                    <button onClick={toggleCalendar} className={styles.dueDateBtn}>Select Due Date</button>
+
+                    <button onClick={toggleCalendar} className={styles.dueDateBtn}>{dateShowInButton}</button>
                     <div className={styles.saveCancelBtn}>
                         <button onClick={closeModal} className={styles.cancelBtn}>Cancel</button>
                         <button onClick={handleEdit} className={styles.saveBtn}>Save</button>
                     </div>
                 </div>
             </div>
-            <ToastContainer />
+            <div className={styles.dateDiv}>
+                {showCalendar && (
+                    <DatePicker
+                        showIcon
+                        selected={calenderDate}
+                        onChange={handleDateChange}
+                        inline
+                        icon="fa fa-calender"
+                    />
+                )}
+            </div>
         </div >
     );
 };

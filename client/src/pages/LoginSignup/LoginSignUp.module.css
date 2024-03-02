@@ -133,7 +133,7 @@ body {
 
 .passwordToggle, .confirmPasswordToggle, .loginPasswordToggle{
     position: relative;
-    top: 5px;
-    height: 25px;
+    top: 7px;
+    height: 20px;
     right: 35px;
 }

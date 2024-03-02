@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import { BACKEND_URL } from "../../config/baseurl";
+import { backendBaseUrl } from "../../config/baseurl";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "./Setting.module.css";
 import userIcon from "../../assets/images/profile.svg"
@@ -16,25 +16,51 @@ function SettingContent() {
     const [userName, setUserName] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
-
-    const handleUpdatePassword = async () => {
+    
+    const handleUpdatePassword = async (event) => {
+        event.preventDefault();
         setIsLoading(true);
-        if (newPassword === oldPassword) {
-            toast.error("New & Old password not be same!", {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
+      
+        if (!userName) {
+            toast.error("Please enter user name", {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: true,
                 closeOnClick: true,
                 draggable: true,
             });
             setIsLoading(false);
             return;
         }
-        if (!newPassword || !oldPassword) {
-            toast.error("Please fill in all the fields", {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
+        if (newPassword && oldPassword) {
+            if (newPassword === oldPassword) {
+                toast.error("Old & new password can't be same", {
+                    position: "top-right",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    draggable: true,
+                });
+                setIsLoading(false);
+                return;
+            }
+        }
+        if (newPassword && !oldPassword) {
+            toast.error("Please enter new password and old password", {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                draggable: true,
+            });
+            setIsLoading(false);
+            return;
+        }
+        if (!newPassword && oldPassword) {
+            toast.error("Please enter new password and old password", {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: true,
                 closeOnClick: true,
                 draggable: true,
             });
@@ -45,23 +71,25 @@ function SettingContent() {
         try {
             const token = localStorage.getItem('userToken'); // Get the JWT token from localStorage
             const response = await axios.put(
-                `${BACKEND_URL}/users/profile`,
-                { oldPassword, newPassword },
+                `${backendBaseUrl}/users/passwordUpdate`,
+                { oldPassword, newPassword,userName },
                 {
                     headers: {
                         Authorization: `Bearer ${token}` // Set the Authorization header with the token
                     }
                 }
             );
-            toast.success("Password Updated Successfully", {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
+            toast.success("Profile Updated Successfully", {
+                position: "top-right",
+                autoClose: 1000,
+                hideProgressBar: true,
                 closeOnClick: true,
                 draggable: true,
             });
             setNewPassword("");
             setOldPassword("");
+            setIsLoading(false);
+            localStorage.setItem("name", userName);
         } catch (error) {
             // toast.error(error.response.data.error || 'Failed to update password')
             if (error.response.status === 401) {
@@ -87,24 +115,6 @@ function SettingContent() {
         }
     };
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const userId = localStorage.getItem("userId");
-            try {
-                const token = localStorage.getItem('userToken'); // Get the JWT token from localStorage
-                const response = await axios.get(`${BACKEND_URL}/users/${userId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Set the Authorization header with the token
-                    }
-                });
-                setUserName(response.data.user.name)
-            } catch (error) {
-                console.error("Error fetching user name:", error);
-            }
-        };
-        fetchUserData();
-    }, []);
-
     const togglePassword = () => {
         setShowPassword(!showPassword);
     };
@@ -113,7 +123,11 @@ function SettingContent() {
         setShowNewPassword(!showNewPassword);
     };
 
-
+    useEffect(() => {
+        const name = localStorage.getItem("name");
+        setUserName(name);
+       
+    }, []);
     return (
         <div className={styles.settingScreen}>
             <h1 className={styles.settingTitle}>Settings</h1>
@@ -128,8 +142,8 @@ function SettingContent() {
                         name="Name"
                         value={userName}
                         placeholder="Name"
+                        onChange={(e) => setUserName(e.target.value)}
                         className={styles.formInput}
-                        readOnly
                     />
                 </div>
 

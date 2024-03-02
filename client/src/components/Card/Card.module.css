@@ -83,8 +83,9 @@
     margin: 1rem 0 1rem 1rem;
     font-family: "Poppins", sans-serif;
     font-weight: 600;
+    max-lines: 2;
     font-style: normal;
-    font-size: 18px;
+    font-size: 17px;
 }
 
 .checklist{
@@ -114,12 +115,15 @@
     border: none;
     text-transform: uppercase;
     font-family: "Poppins", sans-serif;
-    font-weight: 500;
+    font-weight: 400;
     font-style: normal;
-    border-radius: 10px;
+    border-radius: 6px;
     margin: 0.5rem;
+    font-size: .7rem;
     background-color: #e5e5e5;
+    color: #707070;
     cursor: pointer;
+    padding: .2rem .4rem;
 }
 
 .modeBtn:hover{

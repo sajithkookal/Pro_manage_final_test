@@ -3,6 +3,7 @@
   height: 100vh;
   width: 90vw;
   flex-direction: column;
+   background: #FFFFFF;
 }
 
 .dashboardHeader {
@@ -13,6 +14,8 @@
 .dashboardHeaderName {
   display: flex;
   margin: 1rem 0 0 1rem;
+  font-size: 22px;
+  font-weight: 600;
 }
 
 .dashboardDate{
@@ -25,6 +28,7 @@
 
 .dashboardTitle{
   font-size: 1.5rem;
+  font-weight: 500;
   display: flex;
   justify-content: flex-start;
   margin: 0;
@@ -41,11 +45,6 @@
   font-size: 0.9rem;
 }
 
-.dashboardOptionDiv{
-  display: flex;
-  justify-content: flex-end;
-
-}
 
 .optionList{
   height: 2vh;
@@ -71,8 +70,36 @@
 .toDoContent, .backlogContent, .progressContent, .doneContent{
   height: 100%;
   background-color: #EEF2F5;
-  overflow: auto;
+  overflow-y: auto;
   white-space: nowrap;
+ 
+}
+.filterButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin-top: .1rem;
+
+  position: relative;   
+  right: .1em;
+  bottom: .9rem;
+}
+.dashboardOptionDiv{
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 2rem;
+}
+.arrowDown {
+  /* position: absolute;
+  top: 50%;
+  right: 0;
+  left: 10%; */
+  /* transform: translateY(-50%); */
+  /* width: 0;
+  height: 0; */
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #000;
 }
 
 .blockHeader{
@@ -86,6 +113,9 @@
 .todoBlockHeader, .backlogBlockHeader, .progressBlockHeader, .doneBlockHeader{
   display: flex;
   justify-content: space-between;
+  background-color: #EEF2F5;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .addButton{

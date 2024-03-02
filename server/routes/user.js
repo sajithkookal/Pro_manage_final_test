@@ -67,10 +67,10 @@ router.post("/login", async (req, res) => {
 });
 
 // Route to Change password and name
-router.put("/users/profile", isLoggedIn, async (req, res) => {
+router.put("/users/passwordUpdate", isLoggedIn, async (req, res) => {
   try {
     const userId = req.user._id;
-    const { oldPassword, newPassword } = req.body;
+    const { oldPassword, newPassword, userName } = req.body;
 
     const user = await User.findById(userId);
 
@@ -78,19 +78,22 @@ router.put("/users/profile", isLoggedIn, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Compare the provided old password with the hashed password
-    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (oldPassword && newPassword) {
+      // Compare the provided old password with the hashed password
+      const passwordMatch = await bcrypt.compare(oldPassword, user.password);
 
-    if (!passwordMatch) {
-      return res.status(401).json({ error: "Old password is incorrect" });
+      if (!passwordMatch) {
+        return res.status(401).json({ error: "Old password is incorrect" });
+      }
+
+      // Update the user's new password
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+      user.password = hashedNewPassword;
     }
 
-    // Update the user's new password
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedNewPassword;
-    if (req.body.name) {
-      user.name = req.body.name
-    }
+    user.name = userName
+
     await user.save();
 
     res.status(200).json({ message: "Password updated successfully" });

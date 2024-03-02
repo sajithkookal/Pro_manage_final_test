@@ -1,0 +1,21 @@
+.filterOptions {
+    position: absolute;
+    top: 20%;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+    height: 100px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    font-weight: 500;
+    color: #000;
+  }
+  .filterOptions p {
+    margin: 5px 0;
+    cursor: pointer;
+  }

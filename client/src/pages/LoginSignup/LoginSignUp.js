@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { BACKEND_URL } from "../../config/baseurl";
+import { backendBaseUrl } from "../../config/baseurl";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "./LoginSignUp.module.css"
@@ -21,26 +21,28 @@ function LoginSignup() {
 
     // Function to switch between Sign Up and Log In forms
     const showSignup = () => {
+        setName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
         setShowSignupForm(true);
     };
 
     const showSignin = () => {
+        setName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
         setShowSignupForm(false);
     };
 
     // Function to validate email format
-    const validateEmail = () => {
+    const validateEmail = (newEmail) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            toast.error("Please enter a valid Email Address", {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                draggable: true,
-            });
-        }
-    };
+        const isValid = emailRegex.test(newEmail);
+        return isValid;
+      };
+   
 
     // State variables for form inputs
     const [name, setName] = useState("");
@@ -54,10 +56,12 @@ function LoginSignup() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        console.log("handleRegister", "true");
+        
         setIsSignUpLoading(true);
 
         // Check if required fields are filled
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !confirmPassword) {
             toast.error("Please fill in all the fields", {
                 position: "top-center",
                 autoClose: 2000,
@@ -71,7 +75,7 @@ function LoginSignup() {
 
         // Check if passwords match
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match!", {
+            toast.error("Passwords does not match!", {
                 position: "top-center",
                 autoClose: 2000,
                 hideProgressBar: false,
@@ -81,22 +85,37 @@ function LoginSignup() {
             setIsSignUpLoading(false);
             return;
         }
-
+        if (password.length < 6) {
+            toast.error("Make a strong Password", {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                draggable: true,
+            });
+            setIsSignUpLoading(false);
+            return;
+        }
         // Validate email format
-        validateEmail();
-
+        if(!validateEmail(email)){
+            toast.error("Please enter a valid Email Address", {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                draggable: true,
+            });
+            return;
+        }
+        
         try {
-            const response = await axios.post(`${BACKEND_URL}/users/register`, {
+            const response = await axios.post(`${backendBaseUrl}/register`, {
                 name,
                 email,
                 password,
-                confirmPassword,
             });
 
-
-            if (response.data.token) {
-                localStorage.setItem("userId", response.data.user._id);
-                localStorage.setItem("userToken", response.data.token);
+            if (response.data.success) {
                 localStorage.setItem("name", response.data.name);
                 toast.success("Registration Successful", {
                     position: "top-center",
@@ -106,41 +125,25 @@ function LoginSignup() {
                     draggable: true,
                 });
                 setIsSignUpLoading(false);
-                setTimeout(() => {
-                    navigate("/dashboard"); // Redirect to login after 2 seconds
-                }, 2000);
+                setName("");
+                setEmail("");
+                setPassword("");
+                setConfirmPassword("");
+                showSignup();
             } else {
-                console.error("Registration failed: Token not received");
+                console.error("Registration failed");
             }
         } catch (err) {
-            console.error("Registration failed", err);
-            if (err.response.status === 400) {
-                toast.error("User already exists. Please Login!", {
-                    position: "top-center",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    draggable: true,
-                });
-                setIsSignUpLoading(false);
-                setTimeout(() => {
-                    showSignin();
-                }, 2000); // Redirect to login after 2 seconds
-                return;
-            }
-            toast.error(err.response.data.message, {
-                position: "top-center",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                draggable: true,
-            });
+            console.log("Registration failed", err);
             setIsSignUpLoading(false);
+            return alert(err.response.data.error);
         }
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        console.log("handleLogin", "true");
+        
         setIsSignUpLoading(true);
 
         if (!email || !password) {
@@ -156,7 +159,7 @@ function LoginSignup() {
         }
 
         try {
-            const response = await axios.post(`${BACKEND_URL}/users/login`, {
+            const response = await axios.post(`${backendBaseUrl}/login`, {
                 email,
                 password,
             });
@@ -167,15 +170,15 @@ function LoginSignup() {
                 setIsLoginLoading(false);
                 toast.success("Login Successful", {
                     position: "top-center",
-                    autoClose: 2000,
+                    autoClose: 1000,
                     hideProgressBar: false,
                     closeOnClick: true,
                     draggable: true,
                 });
                 setIsLoginLoading(false);
                 setTimeout(() => {
-                    navigate("/dashboard"); // Redirect to login after 2 seconds
-                }, 2000);
+                    navigate("/dashboard"); // Redirect to dashboard
+                }, 1000);
             } else {
                 toast.error("Incorrect Email or Password. Try again.", {
                     position: "top-center",
@@ -188,6 +191,7 @@ function LoginSignup() {
             }
         } catch (error) {
             console.error("Login failed", error);
+            return alert(error.response.data.error);
         }
     };
 
@@ -245,14 +249,15 @@ function LoginSignup() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     className={styles.formInput}
                                 />
-                                <img src={showLoginPassword ? eyeIcon : eyeSlashIcon} alt="eye icon" className={styles.loginPasswordToggle} onClick={toggleLoginPassword} />
+                                <img src={showLoginPassword ? eyeSlashIcon : eyeIcon} alt="eye icon" className={styles.loginPasswordToggle} onClick={toggleLoginPassword} />
                             </div>
                             <button type="submit" className={styles.signUpBtn}>
                                 {isLoginLoading ? "Loading..." : "Log in"}
                             </button>
                             <p className={styles.formName}>Have no account yet?</p>
-                            <button type="button" onClick={showSignin} className={styles.redirectBtn}>Register</button>
+                            
                         </form>
+                        <button type="button" onClick={showSignin} className={styles.redirectBtn}>Register</button>
                     </div>
                 ) : (
                     <div className={styles.logInFormContainer}>
@@ -300,7 +305,7 @@ function LoginSignup() {
                                     // required
                                     className={styles.formInput}
                                 />
-                                <img src={showPassword ? eyeIcon : eyeSlashIcon} alt="eye icon" className={styles.passwordToggle} onClick={togglePassword} />
+                                <img src={showPassword ? eyeSlashIcon : eyeIcon} alt="eye icon" className={styles.passwordToggle} onClick={togglePassword} />
 
                             </div>
                             <div className={styles.formAttribute}>
@@ -315,15 +320,15 @@ function LoginSignup() {
                                     // required
                                     className={styles.formInput}
                                 />
-                                <img src={showConfirmPassword ? eyeIcon : eyeSlashIcon} alt="eye icon" className={styles.confirmPasswordToggle} onClick={toggleConfirmPassword} />
+                                <img src={showConfirmPassword ? eyeSlashIcon : eyeIcon} alt="eye icon" className={styles.confirmPasswordToggle} onClick={toggleConfirmPassword} />
 
                             </div>
                             <button type="submit" className={styles.signUpBtn} >
                                 {isSignUpLoading ? "Loading..." : "Register"}
                             </button>
                             <p className={styles.formName}>Have an account?</p>
-                            <button type="button" onClick={showSignup} className={styles.redirectBtn}>Log in</button>
                         </form>
+                        <button type="button" onClick={showSignup} className={styles.redirectBtn}>Log in</button>
                     </div>)}
             </div>
             <ToastContainer />
