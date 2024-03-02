@@ -1,2 +1,2 @@
-export const backendBaseUrl = "http://localhost:4000/api";
-export const frontEndBaseUrl = "http://localhost:3000";
+export const backendBaseUrl = "https://pro-manage-final-test.onrender.com/api";
+export const frontEndBaseUrl = "https://pro-manage-final-test.vercel.app";
