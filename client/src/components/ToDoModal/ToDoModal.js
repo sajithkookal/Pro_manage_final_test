@@ -65,26 +65,33 @@ const ToDoModal = ({ isOpen, closeModal, onTaskAdded }) => {
         setSelectedChecklist(selected);
     };
 
-    useEffect(() => {
-        // const fetchTasks = async () => {
-        //     try {
-        //         const token = localStorage.getItem('userToken');
-        //         const response = await axios.get(`${backendBaseUrl}/tasks`, {
-        //             headers: { Authorization: `Bearer ${token}` },
-        //         });
-        //     } catch (error) {
-        //         console.error('Error fetching tasks:', error);
-        //     }
-        // };
-
-        // fetchTasks();
-    }, []);
-
 
     const handleSave = async () => {
         try {
-            if(!title|| !priority || !checklist){
-                toast.success("Please fill mandatory fields", {
+           
+          
+            if(!title|| !priority){
+                toast.error("Please fill mandatory fields", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    draggable: true,
+                });
+                return;
+            }
+            if(checklist.length===0){
+                toast.error("Please add check list", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    draggable: true,
+                });
+                return;
+            }
+            if(checklist[0].text.length===0){
+                toast.error("Please add check list name", {
                     position: "top-center",
                     autoClose: 1000,
                     hideProgressBar: true,
@@ -109,7 +116,7 @@ const ToDoModal = ({ isOpen, closeModal, onTaskAdded }) => {
                     checklist
                 };
             }
-            console.log("body  "+body);
+           
             const response = await axios.post(
                 `${backendBaseUrl}/createTasks`,body,
                 {
@@ -129,7 +136,7 @@ const ToDoModal = ({ isOpen, closeModal, onTaskAdded }) => {
             });
             // alert("Task created");
         } catch (error) {
-            toast.error("Failed to edit task. Make sure check list name added.", {
+            toast.error("Failed to edit task. Make sure check list added.", {
                 position: "top-center",
                 autoClose: 2000,
                 hideProgressBar: true,

@@ -68,8 +68,6 @@ function DashboardContent() {
             const response = await axios.get(`${backendBaseUrl}/tasksFilter?type=${selectedFilter}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log(response.data.tasks);
-            console.log("response.data.tasks");
             setTasks(response.data.tasks);
 
         } catch (error) {

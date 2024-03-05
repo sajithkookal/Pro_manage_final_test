@@ -119,7 +119,6 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
 
     // Function to render the mode buttons based on the current status
     const renderModeButtons = () => {
-     console.log(" newStatusn22  "+editedTask.status);
         switch (editedTask.status) {
             case 'todo':
                 return (

@@ -24,13 +24,9 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
     
     const fetchTaskData = async () => {
         try {
-            console.log("taskEditData");
-            console.log(task);
-        
+          
             const response = await axios.get(`${backendBaseUrl}/taskEditData/${task._id}`);
-            console.log(response.data);
-            console.log("response.data");
-
+      
             setTitle(response.data.task.title || '');
             setPriority(response.data.task.priority || '');
             setChecklist(response.data.task.checklist || []);
@@ -91,7 +87,7 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
 
     const handleEdit = async () => {
         try {
-            if(!title|| !priority || !checklist){
+            if(!title|| !priority ){
                 toast.error("Please fill mandatory fields", {
                     position: "top-center",
                     autoClose: 1000,
@@ -101,7 +97,26 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
                 });
                 return;
             }
-           
+            if(checklist.length===0){
+                toast.error("Please add check list", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    draggable: true,
+                });
+                return;
+            }
+            if(checklist[0].text.length===0){
+                toast.error("Please add check list", {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    draggable: true,
+                });
+                return;
+            }
             const token = localStorage.getItem('userToken');
             const response = await axios.put(
                 `${backendBaseUrl}/updateTasks/${task._id}`,
@@ -114,8 +129,7 @@ const ToDoEditModal = ({ isOpen, closeModal, onTaskAdded, task }) => {
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
-            );
-            console.log("Respooncseeeeeeee", response.data);
+            );      
             onTaskAdded();
             closeModal();
 
