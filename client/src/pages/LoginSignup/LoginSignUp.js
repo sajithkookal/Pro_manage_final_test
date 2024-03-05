@@ -165,6 +165,7 @@ function LoginSignup() {
             });
 
             if (response.data.token) {
+                localStorage.setItem("name", response.data.user.name);
                 localStorage.setItem("sideBarTab",'dashboard');
                 localStorage.setItem("userId", response.data.user._id);
                 localStorage.setItem("userToken", response.data.token);
