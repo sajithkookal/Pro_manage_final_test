@@ -17,6 +17,7 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
     const [collapseIcon, setCollapseIcon] = useState(collapseDownIcon);
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [editedTask, setEditedTask] = useState(task);
+    const [showFullText, setShowFullText] = useState(false);
 
     const checkedTasks = taskChecklist.filter(task => task.isChecked).length; // Updated to use taskChecklist
     const totalTasks = taskChecklist.length; // Updated to use taskChecklist
@@ -33,7 +34,13 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
         setShowOptions(!showOptions);
     };
 
-
+    const handleMouseEnter = () => {
+        setShowFullText(true);
+      };
+    
+      const handleMouseLeave = () => {
+        setShowFullText(false);
+      };
     const toggleChecklist = () => {
         setShowChecklist(!showChecklist); // Toggle checklist visibility
         setCollapseIcon(showChecklist ? collapseDownIcon : collapseUpIcon);
@@ -218,7 +225,8 @@ const Card = ({ task, updateTaskStatus, toggleCloseModal, collapseAll, onTaskAdd
                         </div>
                     )}
                 </div>
-                <div className={styles.title}>{truncatedTitle}</div>
+                <div className={styles.title} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                    {showFullText? title :truncatedTitle}</div>
                 <div className={styles.checklist}>
                     <div className={styles.checklistData}>
                         Checklist ({checkedTasks}/{totalTasks})

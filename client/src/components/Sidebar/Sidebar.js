@@ -10,30 +10,26 @@ import Logout from "../Logout/Logout";
 
 function Sidebar() {
   const navigate = useNavigate();
-  const [activeMode, setActiveMode] = useState('');
+  const [active, setActiveMode] = useState(localStorage.getItem('sideBarTab'));
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
 
 
   const navigateToSettings = () => {
-   // event.preventDefault();
-    console.log("page  setting");
-    setActiveMode('setting');
+    localStorage.setItem("sideBarTab",'setting');
+   // setActiveMode('setting');
     navigate('/setting');
 
   };
   const navigateToAnalytics = () => {
-    //event.preventDefault();
-    console.log("page  analytics");
-    setActiveMode('analytics');
+    localStorage.setItem("sideBarTab",'analytics');
+   // setActiveMode('analytics');
     navigate('/analytics');
 
   };
   const navigateToDashboarde = () => {
-   // event.preventDefault();
-    console.log("page  ");
-    
+    localStorage.setItem("sideBarTab",'dashboard');
     navigate('/dashboard');
-    setActiveMode('dashboard');
+   // setActiveMode('dashboard');
 
   };
 
@@ -45,7 +41,6 @@ function Sidebar() {
   const handleLogout = () => {
     setLogoutModalOpen(true);
   };
-
 
   return (
     <>
@@ -59,7 +54,7 @@ function Sidebar() {
             <div >
 
               <div
-                style={{ backgroundColor: activeMode === 'dashboard' ? '#4391ED1A' : '#FFFFFF' }} className={styles.mode}
+                style={{ backgroundColor: active === 'dashboard' ? '#4391ED1A' : '#FFFFFF' }} className={styles.mode}
 
                 onClick={navigateToDashboarde}
               >
@@ -68,7 +63,7 @@ function Sidebar() {
               </div>
               <div
                 className={styles.mode} onClick={navigateToAnalytics}
-                style={{ backgroundColor: activeMode === 'analytics' ? '#4391ED1A' : '#FFFFFF' }} >
+                style={{ backgroundColor: active === 'analytics' ? '#4391ED1A' : '#FFFFFF' }} >
                 <img
                   src={analyticslogo}
                   alt="logo"
@@ -77,7 +72,7 @@ function Sidebar() {
                 <p className={styles.dashboardMode}>Analytics</p>
               </div>
               <div
-                className={styles.mode} style={{ backgroundColor: activeMode === 'setting' ? '#4391ED1A' : '#FFFFFF' }}
+                className={styles.mode} style={{ backgroundColor: active === 'setting' ? '#4391ED1A' : '#FFFFFF' }}
                 onClick={navigateToSettings}
               >
                 <img src={settinglogo} alt="logo" className={styles.titlelogo} />

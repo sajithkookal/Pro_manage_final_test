@@ -36,7 +36,7 @@ function SettingContent() {
             if (newPassword === oldPassword) {
                 toast.error("Old & new password can't be same", {
                     position: "top-right",
-                    autoClose: 1000,
+                    autoClose: 2000,
                     hideProgressBar: true,
                     closeOnClick: true,
                     draggable: true,
@@ -48,7 +48,7 @@ function SettingContent() {
         if (newPassword && !oldPassword) {
             toast.error("Please enter new password and old password", {
                 position: "top-right",
-                autoClose: 1000,
+                autoClose: 2000,
                 hideProgressBar: true,
                 closeOnClick: true,
                 draggable: true,
@@ -59,7 +59,7 @@ function SettingContent() {
         if (!newPassword && oldPassword) {
             toast.error("Please enter new password and old password", {
                 position: "top-right",
-                autoClose: 1000,
+                autoClose: 2000,
                 hideProgressBar: true,
                 closeOnClick: true,
                 draggable: true,

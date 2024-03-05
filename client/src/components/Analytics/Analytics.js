@@ -15,8 +15,6 @@ function AnalyticsContent() {
             {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log(response.data);
-            console.log("response.data");
 
             setCounts(response.data.counts);
 
@@ -27,20 +25,9 @@ function AnalyticsContent() {
     };
 
     useEffect(() => {
-        // const storedCounts = localStorage.getItem("statusCounts");
-        // const storedPriorityCounts = localStorage.getItem("priorityCounts");
-        // if (storedCounts) {
-        //     setStatusCounts(JSON.parse(storedCounts));
-        // }
-        // if (storedPriorityCounts) {
-        //     const parsedPriorityCounts = JSON.parse(storedPriorityCounts);
-        //     setPriorityCounts(parsedPriorityCounts);
 
-        //     // Calculate the sum of all priorities for due date tasks
-        //     const sumOfPriorities = Object.values(parsedPriorityCounts).reduce((acc, count) => acc + count, 0);
-        //     setDueDateTasks(sumOfPriorities);
-        // }
         fetchTaskCountData();
+        
     }, []);
 
     return (
