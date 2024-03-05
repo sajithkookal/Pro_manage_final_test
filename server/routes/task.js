@@ -162,7 +162,7 @@ router.get('/tasksAnalytics', isLoggedIn, async (req, res) => {
             lowPriority: await Task.countDocuments({ priority: 'Low', createdBy: userId }),
             moderatePriority: await Task.countDocuments({ priority: 'Moderate', createdBy: userId }),
             highPriority: await Task.countDocuments({ priority: 'High', createdBy: userId }),
-            dueDate: await Task.countDocuments({ dueDate: { $exists: true }, createdBy: userId })
+            dueDate: await Task.countDocuments({ dueDate: { $ne: null }, createdBy: userId })
         };
         res.status(200).json({ counts });
     } catch (error) {

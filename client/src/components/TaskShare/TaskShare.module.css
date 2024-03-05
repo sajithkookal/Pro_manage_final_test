@@ -52,6 +52,8 @@
   
   .title {
     display: block;
+    max-width: 100%;
+    word-wrap: break-word;
     font-weight: 600;
     font-size: 22px;
   }
@@ -120,11 +122,11 @@
   }
   
   /* Media queries for responsiveness */
-  @media screen and (max-width: 768px) {
+  /* @media screen and (max-width: 768px) {
     .taskCard {
       max-width: 90%;
     }
-  }
+  } */
   
   @media screen and (max-width: 576px) {
     .taskCard {
@@ -140,6 +142,8 @@
     }
   
     .title {
+      max-width: 100%;
+      word-wrap: break-word;
       font-size: 20px; /* Adjust font size */
     }
   
