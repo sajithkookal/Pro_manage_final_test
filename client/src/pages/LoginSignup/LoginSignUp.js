@@ -18,7 +18,9 @@ function LoginSignup() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showLoginPassword, setShowLoginPassword] = useState(false);
-
+    
+     // initialize momgoDB connection
+    const response = axios.get('https://pro-manage-final-test.onrender.com/');
     // Function to switch between Sign Up and Log In forms
     const showSignup = () => {
         setName("");
